@@ -1,0 +1,201 @@
+{
+  "document": {
+    "filename": "quarterly-review.pdf",
+    "json_content": {
+      "schema_name": "DoclingDocument",
+      "version": "1.10.0",
+      "name": "quarterly-review",
+      "origin": {
+        "mimetype": "application/pdf",
+        "filename": "quarterly-review.pdf",
+        "binary_hash": "cafef00d"
+      },
+      "furniture": {
+        "self_ref": "#/furniture",
+        "children": [
+          {"$ref": "#/texts/5"}
+        ],
+        "content_layer": "furniture",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "body": {
+        "self_ref": "#/body",
+        "children": [
+          {"$ref": "#/texts/0"},
+          {"$ref": "#/texts/1"},
+          {"$ref": "#/texts/2"},
+          {"$ref": "#/texts/3"},
+          {"$ref": "#/tables/0"},
+          {"$ref": "#/pictures/0"}
+        ],
+        "content_layer": "body",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "groups": [],
+      "texts": [
+        {
+          "self_ref": "#/texts/0",
+          "parent": {"$ref": "#/body"},
+          "children": [],
+          "content_layer": "body",
+          "label": "title",
+          "orig": "Quarterly Review",
+          "text": "Quarterly Review",
+          "level": 1,
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {"l": 72, "t": 720, "r": 400, "b": 700}
+            }
+          ]
+        },
+        {
+          "self_ref": "#/texts/1",
+          "parent": {"$ref": "#/body"},
+          "children": [],
+          "content_layer": "body",
+          "label": "section_header",
+          "orig": "Summary",
+          "text": "Summary",
+          "level": 2,
+          "prov": [{"page_no": 1, "bbox": {"l": 72, "t": 680, "r": 200, "b": 660}}]
+        },
+        {
+          "self_ref": "#/texts/2",
+          "parent": {"$ref": "#/body"},
+          "children": [],
+          "content_layer": "body",
+          "label": "paragraph",
+          "orig": "The board reviewed Q3 results.",
+          "text": "The board reviewed Q3 results.",
+          "prov": [{"page_no": 1, "bbox": {"l": 72, "t": 650, "r": 400, "b": 630}}]
+        },
+        {
+          "self_ref": "#/texts/3",
+          "parent": {"$ref": "#/body"},
+          "children": [],
+          "content_layer": "body",
+          "label": "section_header",
+          "orig": "Metrics",
+          "text": "Metrics",
+          "level": 2,
+          "prov": [{"page_no": 1, "bbox": {"l": 72, "t": 610, "r": 200, "b": 590}}]
+        },
+        {
+          "self_ref": "#/texts/4",
+          "parent": {"$ref": "#/pictures/0"},
+          "children": [],
+          "content_layer": "body",
+          "label": "caption",
+          "orig": "Figure 1. Headcount trend.",
+          "text": "Figure 1. Headcount trend."
+        },
+        {
+          "self_ref": "#/texts/5",
+          "parent": {"$ref": "#/furniture"},
+          "children": [],
+          "content_layer": "furniture",
+          "label": "page_footer",
+          "orig": "Page 1",
+          "text": "Page 1"
+        }
+      ],
+      "tables": [
+        {
+          "self_ref": "#/tables/0",
+          "parent": {"$ref": "#/body"},
+          "children": [],
+          "content_layer": "body",
+          "label": "table",
+          "data": {
+            "num_rows": 3,
+            "num_cols": 2,
+            "table_cells": [
+              {
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 1,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "row_span": 1,
+                "col_span": 1,
+                "text": "Metric",
+                "column_header": true
+              },
+              {
+                "start_row_offset_idx": 0,
+                "end_row_offset_idx": 1,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 2,
+                "row_span": 1,
+                "col_span": 1,
+                "text": "Value",
+                "column_header": true
+              },
+              {
+                "start_row_offset_idx": 1,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "row_span": 1,
+                "col_span": 1,
+                "text": "Revenue"
+              },
+              {
+                "start_row_offset_idx": 1,
+                "end_row_offset_idx": 2,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 2,
+                "row_span": 1,
+                "col_span": 1,
+                "text": "12"
+              },
+              {
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 3,
+                "start_col_offset_idx": 0,
+                "end_col_offset_idx": 1,
+                "row_span": 1,
+                "col_span": 1,
+                "text": "Headcount"
+              },
+              {
+                "start_row_offset_idx": 2,
+                "end_row_offset_idx": 3,
+                "start_col_offset_idx": 1,
+                "end_col_offset_idx": 2,
+                "row_span": 1,
+                "col_span": 1,
+                "text": "4"
+              }
+            ]
+          }
+        }
+      ],
+      "pictures": [
+        {
+          "self_ref": "#/pictures/0",
+          "parent": {"$ref": "#/body"},
+          "children": [],
+          "content_layer": "body",
+          "label": "picture",
+          "captions": [{"$ref": "#/texts/4"}],
+          "image": {
+            "mimetype": "image/png",
+            "uri": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+          }
+        }
+      ],
+      "pages": {
+        "1": {
+          "page_no": 1,
+          "size": {"width": 612.0, "height": 792.0}
+        }
+      }
+    }
+  },
+  "status": "success",
+  "processing_time": 0.01,
+  "errors": []
+}
