@@ -130,6 +130,27 @@
     (ok (signals (extract-document b "x" :format :pdf)
                  'doc-extract-error))))
 
+(deftest response-primitives-before-http-protocol
+  ;; CI loads http-protocol as a transitive dep. Mock fns return a JSON
+  ;; string or a keyword plist — never call RESPONSE-STATUS on those.
+  (ok (= 200 (doc-extract-backend-docling::%response-status
+              (fixture-string))))
+  (ok (= 503 (doc-extract-backend-docling::%response-status
+              '(:status 503 :body "{\"status\":\"failure\"}"))))
+  (ok (string= "{\"status\":\"failure\"}"
+               (doc-extract-backend-docling::%response-body
+                '(:status 503 :body "{\"status\":\"failure\"}")))))
+
+(deftest merged-region-uses-protocol-class
+  (let* ((raw "{\"schema_name\":\"DoclingDocument\",\"name\":\"span\",\"body\":{\"children\":[{\"$ref\":\"#/tables/0\"}]},\"texts\":[],\"pictures\":[],\"tables\":[{\"self_ref\":\"#/tables/0\",\"label\":\"table\",\"data\":{\"num_rows\":2,\"num_cols\":1,\"table_cells\":[{\"start_row_offset_idx\":0,\"start_col_offset_idx\":0,\"row_span\":2,\"col_span\":1,\"text\":\"A\"}]}}]}")
+         (doc (docling-document->extracted raw))
+         (table (find-if (lambda (b) (typep b 'table-block))
+                         (extracted-document-blocks doc))))
+    (ok (typep table 'table-block))
+    (ok (= 1 (length (table-block-merged table))))
+    (ok (typep (first (table-block-merged table)) 'merged-region))
+    (ok (= 2 (merged-region-row-span (first (table-block-merged table)))))))
+
 (deftest self-register-priority
   (let ((ext (find-extractor :pdf)))
     (ok (typep ext 'docling-backend)))

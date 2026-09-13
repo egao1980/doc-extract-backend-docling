@@ -113,50 +113,53 @@
      :body body
      :timeout (docling-backend-timeout backend))))
 
-(defun %as-http-request (req)
-  "Soft-use http-protocol:MAKE-HTTP-REQUEST when that system is loaded."
-  (let* ((pkg (find-package :http-protocol))
-         (make (and pkg (find-symbol "MAKE-HTTP-REQUEST" pkg))))
-    (if (and make (fboundp make))
-        (funcall make
-                 :method (docling-http-request-method req)
-                 :url (docling-http-request-url req)
-                 :headers (docling-http-request-headers req)
-                 :content (docling-http-request-body req)
-                 :timeout (docling-http-request-timeout req))
-        req)))
+(defun %plist-response-p (response)
+  (and (consp response) (keywordp (car response))))
+
+(defun %soft-http-call (name response)
+  "Call http-protocol GF only on CLOS responses. Never on strings/plists
+   (CI loads http-protocol as a transitive dep; mocks return JSON/plists)."
+  (when (typep response 'standard-object)
+    (let* ((pkg (find-package :http-protocol))
+           (fn (and pkg (find-symbol name pkg))))
+      (when (and fn (fboundp fn))
+        (handler-case (funcall fn response)
+          (error () nil))))))
 
 (defun %response-status (response)
   (cond
     ((integerp response) response)
-    ((and (consp response) (integerp (car response))) (car response))
+    ((or (stringp response)
+         (hash-table-p response)
+         (and (vectorp response) (not (stringp response))))
+     200)
+    ((%plist-response-p response)
+     (or (getf response :status) 200))
+    ((and (consp response) (integerp (car response)))
+     (car response))
     (t
-     (let* ((pkg (find-package :http-protocol))
-            (st (and pkg (find-symbol "RESPONSE-STATUS" pkg))))
-       (if (and st (fboundp st))
-           (funcall st response)
-           (or (getf (if (listp response) response nil) :status) 200))))))
+     (or (%soft-http-call "RESPONSE-STATUS" response) 200))))
 
 (defun %response-body (response)
   (cond
-    ((stringp response) response)
+    ((or (stringp response) (hash-table-p response)) response)
     ((and (vectorp response) (not (stringp response))) response)
-    ((hash-table-p response) response)
-    ((and (consp response) (stringp (car response))) (car response))
-    ((and (consp response) (cdr response)) (cadr response))
+    ((%plist-response-p response)
+     (getf response :body))
+    ((and (consp response) (integerp (car response)))
+     (second response))
     (t
-     (let* ((pkg (find-package :http-protocol))
-            (body (and pkg (find-symbol "RESPONSE-BODY" pkg))))
-       (if (and body (fboundp body))
-           (funcall body response)
-           (getf (if (listp response) response nil) :body))))))
+     (or (%soft-http-call "RESPONSE-BODY" response) response))))
 
 (defun %invoke-http (backend req)
   (let ((fn (docling-backend-http-fn backend)))
     (unless fn
       (error 'doc-extract-error
              :message "docling-backend has no http-fn — inject one or load an HTTP client"))
-    (funcall fn (%as-http-request req))))
+    ;; Pass the struct. http-fn is injected; do not coerce through
+    ;; http-protocol:MAKE-HTTP-REQUEST (that system may be loaded in CI
+    ;; without the fn expecting its request class).
+    (funcall fn req)))
 
 (defun jget (obj key)
   (let ((s (if (stringp key) key (string key))))
@@ -302,8 +305,10 @@
                           (list (make-text-block :text text))))
               cells)
         (when (or (> rs 1) (> cs 1))
-          (push (make-merged-region :row r :col col
-                                    :row-span rs :col-span cs)
+          ;; protocol exports MERGED-REGION, not MAKE-MERGED-REGION
+          (push (make-instance 'merged-region
+                               :row r :col col
+                               :row-span rs :col-span cs)
                 merged))))
     (make-table-block :rows rows :cols cols
                       :cells (nreverse cells)
