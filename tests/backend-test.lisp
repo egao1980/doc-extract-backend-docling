@@ -188,3 +188,22 @@
               (doc (extract-document b html :format :html)))
          (ok (extracted-document-p doc))
          (ok (plusp (length (document-text doc)))))))))
+
+(deftest json-octets-decode-as-utf-8
+  (let* ((text "{\"t\":\"Ж café 日本 😀\"}")
+         (v (decode-json (encoding-protocol:encode text :encoding :utf-8))))
+    (ok (string= "Ж café 日本 😀" (gethash "t" v))))
+  (ok (signals (decode-json (coerce #(123 34 116 34 58 34 #xC0 #xAF 34 125)
+                                    '(vector (unsigned-byte 8))))
+               'doc-extract-error))
+  (ok (signals (decode-json "{\"a\":") 'doc-extract-error)))
+
+(deftest string-source-encodes-as-utf-8
+  (let* ((box (list nil))
+         (b (capturing-backend box)))
+    (extract-document b "<p>Ж</p>" :format :html)
+    (ok (docling-http-request-p (car box)))
+    (let* ((body (decode-json (docling-http-request-body (car box))))
+           (src (aref (gethash "sources" body) 0)))
+      (ok (equalp (encoding-protocol:encode "<p>Ж</p>" :encoding :utf-8)
+                  (base64-decode (gethash "base64_string" src)))))))

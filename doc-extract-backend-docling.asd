@@ -1,9 +1,11 @@
 (defsystem "doc-extract-backend-docling"
-  :version "0.1.0"
+  :version "0.1.1"
   :description "docling-serve HTTP backend for doc-extract-protocol (injectable http-fn)"
   :author "egao1980"
   :license "MIT"
-  :depends-on ("doc-extract-protocol")
+  :depends-on ((:version "doc-extract-protocol" "0.3.1")
+               (:version "encoding-protocol" "0.3.0")
+               "json-protocol" "json-backend-jzon")
   :serial t
   :pathname "src"
   :components ((:file "package")
