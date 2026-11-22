@@ -83,7 +83,8 @@
      (if (and (not (find #\Newline source))
               (probe-file source))
          (%coerce-octets (pathname source))
-         (map '(simple-array (unsigned-byte 8) (*)) #'char-code source)))))
+         (coerce (encoding-protocol:encode source :encoding :utf-8)
+                 '(simple-array (unsigned-byte 8) (*)))))))
 
 (defun %filename (source format)
   (cond
